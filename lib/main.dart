@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
-// 카카오 네이티브 앱 키 (빌드 시점에 --dart-define로 전달 가능)
-const String KAKAO_NATIVE_APP_KEY = String.fromEnvironment(
-  'KAKAO_NATIVE_APP_KEY',
-  defaultValue: 'cdbd76c62d5a730d76f6e9edd0e320c2', // 내 네이티브 키값
-);
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // runApp() 호출 전 Flutter SDK 초기화
-  KakaoSdk.init(nativeAppKey: KAKAO_NATIVE_APP_KEY);
+  KakaoSdk.init(
+    nativeAppKey: '56b4b3fb65fdc427cf8947ffa48668ce',
+  );
   runApp(const MyApp());
 }
 
