@@ -1,12 +1,16 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
 
   // runApp() 호출 전 Flutter SDK 초기화
   KakaoSdk.init(
-    nativeAppKey: '56b4b3fb65fdc427cf8947ffa48668ce',
+    nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY']!,
   );
   runApp(const MyApp());
 }
@@ -41,12 +45,25 @@ class KakaoLoginPage extends StatefulWidget {
 
 class _KakaoLoginPageState extends State<KakaoLoginPage> {
   bool _isLoggedIn = false;
+  final Dio dio = Dio();
 
   Future<void> _handleKakaoLogin() async {
     try {
       OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-      print('카카오톡으로 로그인 성공 ${token}');
-      print('카카오톡으로 로그인 성공 ${token.idToken}');
+      // 1. dio로 스프링의 /oauth/kakao 호출
+      final response = await dio.post(
+        'http://192.168.0.25:8080/oauth/login',
+        data: token.idToken,
+        options: Options(
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        ),
+      );
+
+      final data = response.data;
+
+      print('카카오톡으로 로그인 성공 ${data}');
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
     }
